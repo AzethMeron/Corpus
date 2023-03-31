@@ -24,7 +24,10 @@ e.Transform(lambda t: t.upper()) # Change all texts to uppercase
 joyful_texts = c['joy'] # Get all texts from 'joy' category (returns list)
 len(joyful_texts) # Number of 'joy' texts
 joyful_texts[10] # Get 11th element from joyful_texts list
-c.SaveJSON("tmp.json")
+c.SaveJSON("tmp.json") # Save to file (safe way)
+for key in c.Labels():
+	print(c[key][0]) # Print first entry (text) in every label
+unique, repeated = e.Strip() # Create two new Corpuses: one with only unique entries, and one with only repeated entries
 ```
 
 Corpus.Save and Corpus.Load use python pickling and thus it's platform- and version-dependant. Use Corpus.SaveJSON and Corpus.LoadJSON instead fo long-term storage.
