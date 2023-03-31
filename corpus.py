@@ -61,6 +61,17 @@ class Corpus(object):
             output = Corpus()
             output.__data = data
             return output
+    def SaveJSON(self, filename):
+        with open(filename, "w") as file:
+            json = jsonpickle.encode(self.__data)
+            file.write(json)
+    def LoadJSON(filename):
+        with open(filename, "r") as file:
+            json = file.read()
+            data = jsonpickle.decode(json)
+            output = Corpus()
+            output.__data = data
+            return output
     def RepetitionSet(self):
         sents = set()
         for label in self.Labels():
@@ -72,7 +83,21 @@ class Corpus(object):
             sents.update( self[label] )
         return len(self) - len( sents )
     def Strip(self):
-        pass # to-do
+        output = Corpus()
+        repetitions = Corpus()
+        sent_to_label = dict()
+        for label in self.Labels():
+            for sent in self[label]:
+                if sent not in sent_to_label: sent_to_label[sent] = []
+                sent_to_label[sent].append(label)
+        for sent in sent_to_label:
+            if len(sent_to_label[sent]) > 1: 
+                for label in sent_to_label[sent]:
+                    repetitions.AddEntry(label, sent)
+            else:
+                label = sent_to_label[sent][0]
+                output.AddEntry(label, sent)
+        return (output, repetitions)
     def Truncate(self, size_per_label):
         for label in self.Labels():
             random.shuffle(self[label])
@@ -81,6 +106,10 @@ class Corpus(object):
     def Balance(self, total_size):
         size_per_label = int(total_size / len(self.Labels()))
         self.Truncate(size_per_label)
+    def Transform(self, func):
+        for label in self.Labels():
+            for i, text in enumerate(self[label]):
+                self[label][i] = func(self[label][i])
 
 # This function was designed to be used with Corpus 2
 # Due to differences in structure, each corpus available online requires it's own loading function, sadly
