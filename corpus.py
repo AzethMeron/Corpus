@@ -3,6 +3,7 @@ import pandas
 import copy
 import sigfig
 import pickle
+import random
 import jsonpickle
 
 class Corpus(object):
@@ -60,11 +61,26 @@ class Corpus(object):
             output = Corpus()
             output.__data = data
             return output
+    def RepetitionSet(self):
+        sents = set()
+        for label in self.Labels():
+            sents.update( self[label] )
+        return sents
     def Repetitions(self):
         sents = set()
         for label in self.Labels():
             sents.update( self[label] )
-        return len(self) - len(sents)
+        return len(self) - len( sents )
+    def Strip(self):
+        pass # to-do
+    def Truncate(self, size_per_label):
+        for label in self.Labels():
+            random.shuffle(self[label])
+            size = min(len(self[label]), size_per_label)
+            self[label] = self[label][0:size-1]
+    def Balance(self, total_size):
+        size_per_label = int(total_size / len(self.Labels()))
+        self.Truncate(size_per_label)
 
 # This function was designed to be used with Corpus 2
 # Due to differences in structure, each corpus available online requires it's own loading function, sadly
