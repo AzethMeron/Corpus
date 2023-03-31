@@ -21,27 +21,27 @@ class Corpus(object):
             if key not in output.Labels(): output[key] = []
             output[key] = output[key] + obj[key]
         return output
-    def __len__(self):
+    def __len__(self): 
         size = 0
         for label in self.Labels():
             size = size + len(self[label])
         return size
-    def AddEntry(self, label, text):
+    def AddEntry(self, label, text): # Add entry to corpus
         if label not in self.Labels(): self[label] = []
         self[label].append(text)
-    def Labels(self):
+    def Labels(self): # Get all labels in corpus
         return set(self.__data.keys())
-    def Relabel(self, src, tgt):
+    def Relabel(self, src, tgt): # Change label from src to tgt
         if src not in self.Labels(): raise RuntimeError(f"Label {src} not in corpus")
         if tgt in self.Labels(): raise RuntimeError(f"Label {tgt} already in corpus")
         self[tgt] = self[src]
         del self[src]
-    def Merge(self, src, tgt):
+    def Merge(self, src, tgt): # Add all entries from src label to the tgt label, then delete src label
         if src not in self.Labels(): raise RuntimeError(f"Label {src} not in corpus")
         if tgt not in self.Labels(): raise RuntimeError(f"Label {tgt} not in corpus")
         self[tgt] = self[src]
         del self[src]
-    def Stats(self):
+    def Stats(self): # Display stats of corpus
         print("===========================================")
         print(f"Labels in dataset: {self.Labels()}")
         size = len(self)
@@ -50,39 +50,34 @@ class Corpus(object):
             percentage = sigfig.round((len(self[label]) / size) * 100, sigfigs = 2)
             print(f"Label: {label}, amount: {len(self[label])} ({percentage}%)")
         print("===========================================")
-    def Copy(self):
+    def Copy(self): # Create carbon copy
         return copy.deepcopy(self)
-    def Save(self, filename):
+    def Save(self, filename): # Save (pickle)
         with open(filename, "wb") as file:
             pickle.dump(self.__data, file, -1)
-    def Load(filename):
+    def Load(filename): # Load (pickle)
         with open(filename, "rb") as file:
             data = pickle.load(file)
             output = Corpus()
             output.__data = data
             return output
-    def SaveJSON(self, filename):
+    def SaveJSON(self, filename): # Save (JSON)
         with open(filename, "w") as file:
             json = jsonpickle.encode(self.__data)
             file.write(json)
-    def LoadJSON(filename):
+    def LoadJSON(filename): # Load (JSON)
         with open(filename, "r") as file:
             json = file.read()
             data = jsonpickle.decode(json)
             output = Corpus()
             output.__data = data
             return output
-    def RepetitionSet(self):
-        sents = set()
-        for label in self.Labels():
-            sents.update( self[label] )
-        return sents
-    def Repetitions(self):
+    def Repetitions(self): # Get number of repetitions in corpus
         sents = set()
         for label in self.Labels():
             sents.update( self[label] )
         return len(self) - len( sents )
-    def Strip(self):
+    def Strip(self): # Remove all repeating entries
         output = Corpus()
         repetitions = Corpus()
         sent_to_label = dict()
