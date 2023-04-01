@@ -105,6 +105,13 @@ class Corpus(object):
         for label in self.Labels():
             for i, text in enumerate(self[label]):
                 self[label][i] = func(self[label][i])
+    def Dataset(self):
+        output = []
+        for label in self.Labels():
+            for text in self[label]:
+                output.append( (text,label) )
+        random.shuffle(output)
+        return output        
 
 # This function was designed to be used with Corpus 2
 # Due to differences in structure, each corpus available online requires it's own loading function, sadly
