@@ -105,13 +105,28 @@ class Corpus(object):
         for label in self.Labels():
             for i, text in enumerate(self[label]):
                 self[label][i] = func(self[label][i])
-    def Dataset(self):
-        output = []
+    def Split(self, train_percentage, test_percentage, validation_percentage):
+        train_percentage = abs(train_percentage)
+        test_percentage = abs(test_percentage)
+        validation_percentage = abs(validation_percentage)
+        if (train_percentage + test_percentage + validation_percentage) > 1: raise RuntimeError("Sum of percentages above 1") 
+        train = Corpus()
+        test = Corpus()
+        validation = Corpus()
         for label in self.Labels():
-            for text in self[label]:
-                output.append( (text,label) )
-        random.shuffle(output)
-        return output        
+            train_size = len(self[label]) * train_percentage
+            test_size = len(self[label]) * test_percentage
+            validation_size = len(self[label]) * validation_percentage
+            random.shuffle(self[label])
+            for i, text in enumerate(self[label]):
+                if i < train_size:
+                    train.AddEntry(label, text)
+                elif i < train_size + test_size:
+                    test.AddEntry(label, text)
+                elif i < train_size + test_size + validation_size:
+                    validation.AddEntry(label, text)
+        return train, test, validation
+        
 
 # This function was designed to be used with Corpus 2
 # Due to differences in structure, each corpus available online requires it's own loading function, sadly
