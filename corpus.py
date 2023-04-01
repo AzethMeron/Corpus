@@ -5,6 +5,7 @@ import sigfig
 import pickle
 import random
 import jsonpickle
+from nltk import FreqDist
 
 class Corpus(object):
     def __init__(self):
@@ -126,6 +127,12 @@ class Corpus(object):
                 elif i < train_size + test_size + validation_size:
                     validation.AddEntry(label, text)
         return train, test, validation
+    def Vocabulary(self, tokenizer): # tokenizer(text) -> [ token1, token2, ... ]
+        all_tokens = []
+        for label in self.Labels():
+            for text in self[label]:
+                all_tokens = all_tokens + tokenizer(text)
+        return FreqDist(all_tokens)
         
 
 # This function was designed to be used with Corpus 2
