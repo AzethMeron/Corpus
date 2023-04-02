@@ -152,7 +152,9 @@ class Corpus(object):
         all_tokens = []
         for label in self.Labels():
             for text in self[label]:
-                all_tokens = all_tokens + tokenizer(text)
+                lokal_tokens = tokenizer(text)
+                for token in lokal_tokens:
+                    all_tokens.append(token)
         return FreqDist(all_tokens)
         
 
