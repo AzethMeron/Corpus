@@ -7,6 +7,9 @@ import random
 import jsonpickle
 from nltk import FreqDist
 
+# Designed to be easy to use and modify
+# not to be fast
+
 class Corpus(object):
     def __init__(self):
         self.__data = dict()
@@ -127,6 +130,20 @@ class Corpus(object):
                 elif i < train_size + test_size + validation_size:
                     validation.AddEntry(label, text)
         return train, test, validation
+    def Dataset(self):
+        output = []
+        for label in self.Labels():
+            for text in self[label]:
+                output.append( (text, label) )
+        return output
+    def DatasetXY(self):
+        x = []
+        y = []
+        for label in self.Labels():
+            for text in self[label]:
+                x.append(text)
+                y.append(label)
+        return x, y
     def Vocabulary(self, tokenizer): # tokenizer(text) -> [ token1, token2, ... ]
         all_tokens = []
         for label in self.Labels():
