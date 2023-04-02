@@ -156,16 +156,33 @@ class Corpus(object):
                 for token in lokal_tokens:
                     all_tokens.append(token)
         return FreqDist(all_tokens)
-        
-
-# This function was designed to be used with Corpus 2
-# Due to differences in structure, each corpus available online requires it's own loading function, sadly
-# Leaving as example "how-to"
-def parse_csv(filename):
-    f = pandas.read_csv(filename)
-    output = Corpus()
-    for i in f.iterrows():
-        text = i[1]['text']
-        label = i[1]['label']
-        output.AddEntry(label, text)
-    return output
+    def PrintCSV(self, filename, style = False):
+        # style=False -> text,sentiment
+        # style=True -> text,label1,label2
+        data = self.Dataset()
+        all_labels = list(self.Labels())
+        with open(filename, "w") as file:
+            if style:
+                # Header
+                file.write("text")
+                for label in all_labels: file.write(f",{label}")
+                file.write("\n")
+                # Content
+                for (text, label) in data:
+                    file.write(text)
+                    for l in all_labels:
+                        if l == label: file.write(",1")
+                        else: file.write(",0")
+                    file.write("\n")
+            else:
+                file.write("text,sentiment\n")
+                for (text, label) in data: file.write(f"{text},{label}\n")
+    def ImportCSV(filename, label_text, label_sentiment):
+        # Supports only style=False -> text,sentiment 
+        f = pandas.read_csv(filename)
+        output = Corpus()
+        for i in f.iterrows():
+            text = i[1][label_text]
+            label = i[1][label_sentiment]
+            output.AddEntry(label, text)
+        return output
