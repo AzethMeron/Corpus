@@ -30,6 +30,10 @@ class Corpus(object):
         for label in self.Labels():
             size = size + len(self[label])
         return size
+    def __iter__(self):
+        return iter(self.__data)
+    def __contains__(self, key):
+        return key in self.__data
     def AddEntry(self, label, text): # Add entry to corpus
         if label not in self.Labels(): self[label] = []
         self[label].append(text)
