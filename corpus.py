@@ -47,7 +47,7 @@ class Corpus(object):
     def Merge(self, src, tgt): # Add all entries from src label to the tgt label, then delete src label
         if src not in self.Labels(): raise RuntimeError(f"Label {src} not in corpus")
         if tgt not in self.Labels(): raise RuntimeError(f"Label {tgt} not in corpus")
-        self[tgt] = self[src]
+        self[tgt] = self[tgt] + self[src]
         del self[src]
     def Stats(self): # Display stats of corpus
         print("===========================================")
@@ -91,14 +91,14 @@ class Corpus(object):
         sent_to_label = dict()
         for label in self.Labels():
             for sent in self[label]:
-                if sent not in sent_to_label: sent_to_label[sent] = []
-                sent_to_label[sent].append(label)
+                if sent not in sent_to_label: sent_to_label[sent] = set()
+                sent_to_label[sent].add(label)
         for sent in sent_to_label:
             if len(sent_to_label[sent]) > 1: 
                 for label in sent_to_label[sent]:
                     repetitions.AddEntry(label, sent)
             else:
-                label = sent_to_label[sent][0]
+                label = next(iter(sent_to_label[sent]))
                 output.AddEntry(label, sent)
         return (output, repetitions)
     def Truncate(self, size_per_label):
