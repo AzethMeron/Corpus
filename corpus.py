@@ -139,14 +139,14 @@ class Corpus(object):
         for label in self.Labels():
             for text in self[label]:
                 output.append( (text, label) )
+        random.shuffle(output)
         return output
     def DatasetXY(self):
         x = []
         y = []
-        for label in self.Labels():
-            for text in self[label]:
-                x.append(text)
-                y.append(label)
+        for text, label in self.Dataset():
+            x.append(text)
+            y.append(label)
         return x, y
     def Vocabulary(self, tokenizer): # tokenizer(text) -> [ token1, token2, ... ]
         all_tokens = []
