@@ -152,9 +152,7 @@ class Corpus(object):
         all_tokens = []
         for label in self.Labels():
             for text in self[label]:
-                lokal_tokens = tokenizer(text)
-                for token in lokal_tokens:
-                    all_tokens.append(token)
+                all_tokens.extend(tokenizer(text))
         return FreqDist(all_tokens)
     def PrintCSV(self, filename, style = False):
         # style=False -> text,sentiment
